@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygns3tui"
+version = "2023.06.16.01"
+description = "TUI application to manage GNS3 server using the v2 API"
+
+readme = "README.md"
+
+requires-python = ">=3.10"
+
+authors = [
+    {email = "dejongh.st@gmail.com"},
+    {name = "Steve De Jongh"}
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python"
+]
+
+dependencies = [
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.scripts]
+pygns3tui = "main:main"
