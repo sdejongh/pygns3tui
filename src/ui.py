@@ -52,7 +52,10 @@ class Gns3Tui(App):
     def on_mount(self):
         projects_list = self.query_one("#projects_list")
         projects_list.cursor_type = "row"
-        projects_list.add_columns(*('Project Name', 'Project UID', 'Project Path'))
+        projects_list.add_column(label="Project Name", key="project_name")
+        projects_list.add_column(label="Project ID", key="project_id")
+        projects_list.add_column(label="Project Status", key="project_status")
+        projects_list.add_column(label="Project Path", key="project_path")
         self.refresh_projects()
 
     def refresh_projects(self):
@@ -60,8 +63,9 @@ class Gns3Tui(App):
         projects_list.clear()
         projects = self.controller.get_projects()
         for project in projects:
-            row = (project.name, project.project_id, project.path)
+            row = (project.name, project.project_id, project.status, project.path)
             projects_list.add_row(*row)
+        projects_list.sort("project_name")
 
     def action_project_refresh(self):
         self.refresh_projects()
