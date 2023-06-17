@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pygns3tui"
-version = "2023.06.16.01"
+version = "2023.06.17.01"
 description = "TUI application to manage GNS3 server using the v2 API"
 
 readme = "README.md"
