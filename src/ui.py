@@ -1,3 +1,4 @@
+import requests
 from textual.app import App, ComposeResult
 from textual.screen import Screen, ModalScreen
 from textual import events
@@ -28,16 +29,16 @@ class ModalYesNo(ModalScreen[bool]):
 
 
 class ModalTextInput(ModalScreen[str]):
-    def __init__(self, text: str, label: str, value: str = ""):
+    def __init__(self, text: str, label: str, data):
         self.__text = text
         self.__label = label
-        self.__value = value
+        self.__data = data
         super().__init__()
 
     def compose(self) -> ComposeResult:
         yield Grid(
             Label(self.__text, id="description"),
-            Input(value=self.__value, placeholder="...", name=self.__label, id="inputbox"),
+            Input(value=self.__data[0], placeholder="...", name=self.__label, id="inputbox"),
             Button("Apply", variant="primary", id="apply"),
             Button("Cancel", variant="error", id="cancel"),
             id="dialog"
@@ -45,9 +46,11 @@ class ModalTextInput(ModalScreen[str]):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "apply":
-            self.dismiss(" ")
+            text = self.query_one("#inputbox").value
+            self.__data[0] = text
+            self.dismiss(self.__data)
         else:
-            self.dismiss(False)
+            self.dismiss(None)
 
 
 class DeleteConfirm(ModalScreen[bool]):
@@ -131,7 +134,34 @@ class Gns3Tui(App):
         label = "Project name:"
         projects_list = self.query_one("#projects_list")
         project = projects_list.get_row_at(projects_list.cursor_coordinate.row)
-        self.push_screen(ModalTextInput(text, label, project[0]))
+
+        def check_name(project) -> None:
+            if project[0] is not None:
+                project_data = self.controller.get_project(project[1])
+                new_data = {
+                    "name": project_data["name"]
+                }
+                self.controller.update_project(project_data["project_id"], new_data)
+                self.refresh_projects()
+
+        self.push_screen(ModalTextInput(text, label, project), check_name)
+
+    def action_project_duplicate(self):
+        text = "Enter the name of the duplicated project"
+        label = "Project name:"
+        projects_list = self.query_one("#projects_list")
+        project = projects_list.get_row_at(projects_list.cursor_coordinate.row)
+
+        def check_name(project) -> None:
+            if project[0] is not None:
+                project_data = self.controller.get_project(project[1])
+                new_data = {
+                    "name": project[0]
+                }
+                self.controller.duplicate_project(project_data["project_id"], new_data)
+                self.refresh_projects()
+
+        self.push_screen(ModalTextInput(text, label, project), check_name)
 
 
 
