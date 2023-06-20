@@ -2,9 +2,52 @@ from textual.app import App, ComposeResult
 from textual.screen import Screen, ModalScreen
 from textual import events
 from textual.binding import Binding
-from textual.containers import Grid
-from textual.widgets import Header, Footer, DataTable, Button, Label
+from textual.containers import Grid, Container, Horizontal
+from textual.widgets import Header, Footer, DataTable, Button, Label, Input, Static, Placeholder
 from controller import Gns3Controller, Gns3Project
+
+
+class ModalYesNo(ModalScreen[bool]):
+    def __init__(self, question):
+        self.__question = question
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Label(self.__question, id="question"),
+            Button("Yes", variant="primary", id="yes"),
+            Button("No", variant="error", id="no"),
+            id="dialog",
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "yes":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
+
+
+class ModalTextInput(ModalScreen[str]):
+    def __init__(self, text: str, label: str, value: str = ""):
+        self.__text = text
+        self.__label = label
+        self.__value = value
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Label(self.__text, id="description"),
+            Input(value=self.__value, placeholder="...", name=self.__label, id="inputbox"),
+            Button("Apply", variant="primary", id="apply"),
+            Button("Cancel", variant="error", id="cancel"),
+            id="dialog"
+        )
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "apply":
+            self.dismiss(" ")
+        else:
+            self.dismiss(False)
 
 
 class DeleteConfirm(ModalScreen[bool]):
@@ -80,7 +123,15 @@ class Gns3Tui(App):
                 self.controller.delete_project(project_id)
                 self.refresh_projects()
 
-        self.push_screen(DeleteConfirm(project), check_delete)
+        question = f"Are you sure you want to delete the project ?\nName: {project[0]}\nID: {project[1]}"
+        self.push_screen(ModalYesNo(question), check_delete)
+
+    def action_project_rename(self):
+        text = "Enter the new name of the project."
+        label = "Project name:"
+        projects_list = self.query_one("#projects_list")
+        project = projects_list.get_row_at(projects_list.cursor_coordinate.row)
+        self.push_screen(ModalTextInput(text, label, project[0]))
 
 
 
