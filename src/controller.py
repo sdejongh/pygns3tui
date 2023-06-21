@@ -17,10 +17,13 @@ class Gns3Controller:
 
     def __query(self, uri):
         url = f"http://{self.host}:{self.port}{uri}"
-        result = requests.get(url)
-        if result.status_code == 200:
-            return result.json()
-        return None
+        try:
+            result = requests.get(url)
+            if result.status_code == 200:
+                return result.json()
+            return None
+        except requests.ConnectionError:
+            return None
 
     def __delete(self, uri):
         url = f"http://{self.host}:{self.port}{uri}"
@@ -51,6 +54,9 @@ class Gns3Controller:
     def __get_projects(self):
         uri = "/v2/projects"
         return self.__query(uri=uri)
+
+    def is_alive(self) -> bool:
+        return self.__get_version() is not None
 
     def get_project(self,project_id):
         uri = f"/v2/projects/{project_id}"

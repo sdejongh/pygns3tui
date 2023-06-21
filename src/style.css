@@ -36,3 +36,7 @@ ModalYesNo {
 ModalTextInput {
     align: center middle;
 }
+
+ModelSetServer {
+    align: center middle;
+}
