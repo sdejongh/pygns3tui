@@ -1,4 +1,4 @@
-from ui import Gns3Tui
+from pygns3tui.ui import Gns3Tui
 
 
 def main():

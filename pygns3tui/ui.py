@@ -5,7 +5,7 @@ from textual import events
 from textual.binding import Binding
 from textual.containers import Grid, Container, Horizontal
 from textual.widgets import Header, Footer, DataTable, Button, Label, Input, Static, Placeholder
-from controller import Gns3Controller, Gns3Project
+from pygns3tui.controller import Gns3Controller, Gns3Project
 
 
 class ModalYesNo(ModalScreen[bool]):

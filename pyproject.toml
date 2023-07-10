@@ -1,31 +1,19 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "pygns3tui"
-version = "2023.06.17.01"
-description = "TUI application to manage GNS3 server using the v2 API"
-
+version = "1.0.0"
+description = "TUI interface to manage GNS3 servers projects using the v2 API."
+authors = ["Steve De Jongh <dejongh.st@gmail.com>"]
 readme = "README.md"
+packages = [{include = "pygns3tui"}]
 
-requires-python = ">=3.10"
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.31.0"
+textual = "^0.27.0"
 
-authors = [
-    {email = "dejongh.st@gmail.com"},
-    {name = "Steve De Jongh"}
-]
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-classifiers = [
-  "Development Status :: 4 - Beta",
-  "Programming Language :: Python"
-]
-
-dependencies = [
-]
-
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[project.scripts]
-pygns3tui = "main:main"
+[tool.poetry.scripts]
+pygns3tui = "pygns3tui.main:main"
